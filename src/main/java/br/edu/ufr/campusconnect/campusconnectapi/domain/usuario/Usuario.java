@@ -1,5 +1,6 @@
 package br.edu.ufr.campusconnect.campusconnectapi.domain.usuario;
 
+import br.edu.ufr.campusconnect.campusconnectapi.domain.usuario.dto.DadosCadastroUsuario;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Usuario {
 
@@ -46,6 +46,12 @@ public class Usuario {
 
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
+
+    public Usuario(DadosCadastroUsuario dados, String senhaHash) {
+        this.nomeCompleto = dados.nomeCompleto();
+        this.email = dados.email();
+        this.senhaHash = senhaHash;
+    }
 
     @PrePersist
     protected void onCreate() {
