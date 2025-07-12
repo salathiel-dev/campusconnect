@@ -1,6 +1,7 @@
 package br.edu.ufr.campusconnect.campusconnectapi.domain.produto;
 
 import br.edu.ufr.campusconnect.campusconnectapi.domain.usuario.Usuario;
+import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.dto.DadosCadastroProduto;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -42,6 +43,14 @@ public class Produto {
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
 
+
+    public Produto(DadosCadastroProduto dados, Usuario vendedor) {
+        this.titulo = dados.titulo();
+        this.descricao = dados.descricao();
+        this.preco = dados.preco();
+        this.categoria = dados.categoria();
+        this.vendedor = vendedor;
+    }
 
     @PrePersist
     protected void onCreate() {
