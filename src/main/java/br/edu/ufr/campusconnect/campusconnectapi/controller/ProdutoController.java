@@ -2,6 +2,7 @@ package br.edu.ufr.campusconnect.campusconnectapi.controller;
 
 import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.Produto;
 import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.ProdutoRepository;
+import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.dto.DadosAtualizacaoProduto;
 import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.dto.DadosCadastroProduto;
 import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.dto.DadosDetalhamentoProduto;
 import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.dto.DadosListagemProduto;
@@ -46,6 +47,21 @@ public class ProdutoController {
     @GetMapping("/{id}")
     public ResponseEntity detalhar(@PathVariable UUID id) {
         var produto = repository.getOne(id);
+        return ResponseEntity.ok(new DadosDetalhamentoProduto(produto));
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity atualizar(@PathVariable UUID id, @RequestBody DadosAtualizacaoProduto dados, Authentication authentication) {
+        var produto = repository.getReferenceById(id);
+
+        var usuarioLogado = (Usuario) authentication.getPrincipal();
+        if (!produto.getVendedor().getId().equals(usuarioLogado.getId())) {
+            return ResponseEntity.status(403).body("Acesso negado: você não é o vendedor deste produto.");
+        }
+
+        produto.atualizarInformacoes(dados);
+
         return ResponseEntity.ok(new DadosDetalhamentoProduto(produto));
     }
 }

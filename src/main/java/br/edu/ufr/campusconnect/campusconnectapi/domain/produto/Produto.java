@@ -2,6 +2,7 @@ package br.edu.ufr.campusconnect.campusconnectapi.domain.produto;
 
 import br.edu.ufr.campusconnect.campusconnectapi.domain.usuario.Usuario;
 import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.dto.DadosCadastroProduto;
+import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.dto.DadosAtualizacaoProduto;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -57,6 +58,21 @@ public class Produto {
         this.dataCriacao = LocalDateTime.now();
         this.dataAtualizacao = LocalDateTime.now();
         this.status = StatusProduto.ATIVO;
+    }
+
+    public void atualizarInformacoes(DadosAtualizacaoProduto dados) {
+        if (dados.titulo() != null) {
+            this.titulo = dados.titulo();
+        }
+        if (dados.descricao() != null) {
+            this.descricao = dados.descricao();
+        }
+        if (dados.preco() != null) {
+            this.preco = dados.preco();
+        }
+        if (dados.categoria() != null) {
+            this.categoria = dados.categoria();
+        }
     }
 
     @PreUpdate
