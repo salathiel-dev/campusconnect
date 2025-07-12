@@ -2,6 +2,7 @@ package br.edu.ufr.campusconnect.campusconnectapi.controller;
 
 import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.Produto;
 import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.ProdutoRepository;
+import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.StatusProduto;
 import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.dto.DadosAtualizacaoProduto;
 import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.dto.DadosCadastroProduto;
 import br.edu.ufr.campusconnect.campusconnectapi.domain.produto.dto.DadosDetalhamentoProduto;
@@ -40,7 +41,7 @@ public class ProdutoController {
 
     @GetMapping
     public ResponseEntity<Page<DadosListagemProduto>> listar(@PageableDefault(size = 10, sort = {"dataCriacao"}) Pageable paginacao) {
-        var page = repository.findAll(paginacao).map(DadosListagemProduto::new);
+        var page = repository.findAllByStatus(StatusProduto.ATIVO, paginacao).map(DadosListagemProduto::new);
         return ResponseEntity.ok(page);
     }
 
@@ -63,6 +64,21 @@ public class ProdutoController {
         produto.atualizarInformacoes(dados);
 
         return ResponseEntity.ok(new DadosDetalhamentoProduto(produto));
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity excluir(@PathVariable UUID id, Authentication authentication) {
+        var produto = repository.getReferenceById(id);
+
+        var usuarioLogado = (Usuario) authentication.getPrincipal();
+        if (!produto.getVendedor().getId().equals(usuarioLogado.getId())) {
+            return ResponseEntity.status(403).body("Acesso negado: você não é o vendedor deste produto.");
+        }
+
+        produto.excluir();
+
+        return ResponseEntity.noContent().build();
     }
 }
 

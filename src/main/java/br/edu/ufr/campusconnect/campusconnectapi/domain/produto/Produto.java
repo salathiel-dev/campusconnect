@@ -75,6 +75,10 @@ public class Produto {
         }
     }
 
+    public void excluir() {
+        this.status = StatusProduto.INATIVO;
+    }
+
     @PreUpdate
     protected void onUpdate() {
         this.dataAtualizacao = LocalDateTime.now();
