@@ -19,15 +19,12 @@ class _SplashScreenState extends State<SplashScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('userToken');
 
-    // Aguarda um pouco para mostrar a tela de splash
     await Future.delayed(const Duration(seconds: 2));
 
-    if (mounted) { // Verifica se o widget ainda está na árvore de widgets
+    if (mounted) {
       if (token != null) {
-        // Se houver um token, vai para a HomeScreen
         Navigator.of(context).pushReplacementNamed('/home');
       } else {
-        // Se não houver token, vai para a LoginScreen
         Navigator.of(context).pushReplacementNamed('/login');
       }
     }
@@ -36,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Color(0xFF193866), // ufr-blue
+      backgroundColor: Color(0xFF193866),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

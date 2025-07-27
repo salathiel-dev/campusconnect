@@ -3,23 +3,19 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // Configuração de URL baseada na plataforma
   static String get baseUrl {
     if (Platform.isAndroid) {
-      // Para emulador Android
-      return 'http://10.0.2.2:8080';
+      return 'http://10.0.2.2:8081';
     } else if (Platform.isIOS) {
-      // Para simulador iOS
-      return 'http://localhost:8080';
+      return 'http://localhost:8081';
     } else {
-      // Para desktop (Windows, macOS, Linux) e web
-      return 'http://localhost:8080';
+      return 'http://localhost:8081';
     }
   }
 
   static const Duration _timeout = Duration(seconds: 15);
 
-  // Método para login
+  // Metodo para login
   static Future<Map<String, dynamic>> login({
     required String email,
     required String password,
@@ -56,7 +52,7 @@ class ApiService {
       return {
         'success': false,
         'error': 'Não foi possível conectar ao servidor. Verifique se:\n'
-                '1. O servidor backend está rodando na porta 8080\n'
+                '1. O servidor backend está rodando na porta 8081\n'
                 '2. Sua conexão de rede está funcionando\n'
                 '3. O firewall não está bloqueando a conexão',
       };
@@ -73,10 +69,10 @@ class ApiService {
     }
   }
 
-  // Método para testar conexão com o servidor
+  // Metodo para testar conexão com o servidor
   static Future<bool> testConnection() async {
     try {
-      final url = Uri.parse('$baseUrl/health');
+      final url = Uri.parse('$baseUrl/actuator/health');
       final response = await http.get(url).timeout(const Duration(seconds: 5));
       return response.statusCode == 200;
     } catch (error) {

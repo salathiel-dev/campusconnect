@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
             onPressed: () async{
               final prefs = await SharedPreferences.getInstance();
               await prefs.setString('userToken', token);
-              if (!mounted) {
+              if (mounted) {
                 Navigator.of(ctx).pop();
                 Navigator.of(context).pushReplacementNamed('/home');
               }
