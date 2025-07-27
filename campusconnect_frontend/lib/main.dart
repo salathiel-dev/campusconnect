@@ -1,3 +1,4 @@
+import 'src/screens/add_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'src/screens/home_screen.dart';
 import 'src/screens/login_screen.dart';
@@ -23,6 +24,7 @@ class CampusConnectApp extends StatelessWidget {
         '/': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
+        '/add-product': (context) => const AddProductScreen(),
       },
       debugShowCheckedModeBanner: false,
     );

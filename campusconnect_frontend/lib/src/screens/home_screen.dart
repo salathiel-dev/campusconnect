@@ -115,6 +115,15 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed('/add-product');
+        },
+        backgroundColor: ufrBlue,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+        tooltip: 'Adicionar Produto',
+      ),
     );
   }
 }

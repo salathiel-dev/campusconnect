@@ -52,4 +52,38 @@ class ProdutoService {
       print('--- Fim da busca de produtos ---');
     }
   }
+
+  static Future<void> cadastrarProduto({
+    required String titulo,
+    required String descricao,
+    required double preco,
+    required String categoria,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('userToken');
+
+    if (token == null) {
+      throw Exception('Utilizador não autenticado.');
+    }
+
+    final url = Uri.parse('$baseUrl/products');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode({
+        'titulo': titulo,
+        'descricao': descricao,
+        'preco': preco,
+        'categoria': categoria,
+      }),
+    ).timeout(timeoutDuration);
+
+    if (response.statusCode != 201) {
+      throw Exception('Falha ao cadastrar o produto. Status: ${response.statusCode}');
+    }
+  }
 }
