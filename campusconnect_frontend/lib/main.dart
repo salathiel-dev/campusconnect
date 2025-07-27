@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'src/screens/home_screen.dart';
 import 'src/screens/login_screen.dart';
 import 'src/screens/splash_screen.dart';
+import 'src/screens/product_detail_screen.dart';
 
 void main() {
   runApp(const CampusConnectApp());
@@ -19,7 +20,17 @@ class CampusConnectApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Inter',
       ),
-      initialRoute: '/',
+      onGenerateRoute: (settings) {
+        if (settings.name == '/product-detail') {
+          final productId = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (context) {
+              return ProductDetailScreen(produtoId: productId);
+            },
+          );
+        }
+        return null;
+      },
       routes: {
         '/': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),

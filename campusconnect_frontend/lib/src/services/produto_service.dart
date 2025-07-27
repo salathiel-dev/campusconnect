@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/produto.dart'; // Garanta que este caminho está correto
+import '../models/produto.dart';
+import '../models/produto_detalhado.dart';
 
 class ProdutoService {
   // CORREÇÃO: Alterado de 10.0.2.2 para localhost
@@ -84,6 +85,31 @@ class ProdutoService {
 
     if (response.statusCode != 201) {
       throw Exception('Falha ao cadastrar o produto. Status: ${response.statusCode}');
+    }
+  }
+  static Future<ProdutoDetalhado> buscarProdutoPorId(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('userToken');
+
+    if (token == null) {
+      throw Exception('Utilizador não autenticado.');
+    }
+
+    final url = Uri.parse('$baseUrl/products/$id');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    ).timeout(timeoutDuration);
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      return ProdutoDetalhado.fromJson(responseData);
+    } else {
+      throw Exception('Falha ao carregar os detalhes do produto. Status: ${response.statusCode}');
     }
   }
 }

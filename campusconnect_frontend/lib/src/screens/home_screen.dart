@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Importe o SharedPreferences
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/produto.dart';
 import '../services/produto_service.dart';
 
@@ -25,7 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
     await prefs.remove('userToken'); // Remove o token
 
     if (mounted) {
-      // Navega de volta para a tela de login, limpando o histórico
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
     }
   }
@@ -43,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('CampusConnect', style: TextStyle(color: Colors.white)),
         automaticallyImplyLeading: false,
         actions: [
-          // Adiciona o botão de logout na barra superior
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: _handleLogout,
@@ -67,7 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 16),
                     const Text(
                       'Erro ao Carregar Produtos',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
@@ -95,25 +94,38 @@ class _HomeScreenState extends State<HomeScreen> {
           } else {
             final produtos = snapshot.data!;
             return ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              itemCount: produtos.length,
-              itemBuilder: (context, index) {
-                final produto = produtos[index];
-                return Card(
-                  elevation: 2,
-                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16.0),
-                    title: Text(produto.titulo, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    subtitle: Text('Vendido por: ${produto.nomeVendedor}'),
-                    trailing: Text('R\$ ${produto.preco.toStringAsFixed(2)}', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 16)),
-                  ),
-                );
-              },
+                padding: const EdgeInsets.all(8.0),
+                itemCount: produtos.length,
+                itemBuilder: (context, index) {
+                  final produto = produtos[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(
+                          '/product-detail', arguments: produto.id);
+                    },
+                    child: Card(
+                      elevation: 2,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 4.0),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(16.0),
+                        title: Text(produto.titulo, style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                        subtitle: Text('Vendido por: ${produto.nomeVendedor}'),
+                        trailing: Text('R\$ ${produto.preco.toStringAsFixed(
+                            2)}',
+                            style: const TextStyle(color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16)),
+                      ),
+                    ),
+                  );
+                }
             );
           }
-        },
+        }
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
