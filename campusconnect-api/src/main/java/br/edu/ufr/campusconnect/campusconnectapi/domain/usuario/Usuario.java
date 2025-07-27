@@ -99,7 +99,7 @@ public class Usuario implements UserDetails{
     protected void onCreate() {
         this.dataCriacao = LocalDateTime.now();
         this.dataAtualizacao = LocalDateTime.now();
-        this.ativo = false; // Conta começa inativa até verificação de e-mail
+        this.ativo = true; // Alterei a inatividade para fazer um teste
         this.avaliacaoMedia = BigDecimal.ZERO;
     }
 

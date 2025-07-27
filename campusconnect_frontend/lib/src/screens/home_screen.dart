@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Importe o SharedPreferences
 import '../models/produto.dart';
 import '../services/produto_service.dart';
 
@@ -57,7 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            // UI de erro melhorada
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -96,7 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
           } else {
             final produtos = snapshot.data!;
             return ListView.builder(
-              // ... o seu ListView.builder existente ...
               padding: const EdgeInsets.all(8.0),
               itemCount: produtos.length,
               itemBuilder: (context, index) {

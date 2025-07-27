@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (result['success']) {
         final token = result['data']['token'];
-        _showSuccessDialog('Login Bem-Sucedido!', 'Token: $token');
+        _handleLoginSuccess(token);
       } else {
         _showErrorDialog('Erro no Login', result['error']);
       }
@@ -78,27 +78,13 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _showSuccessDialog(String title, String token) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(title),
-        content: const Text('Autenticação realizada com sucesso!'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Ok'),
-            onPressed: () async{
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setString('userToken', token);
-              if (mounted) {
-                Navigator.of(ctx).pop();
-                Navigator.of(context).pushReplacementNamed('/home');
-              }
-            },
-          )
-        ],
-      ),
-    );
+  Future<void> _handleLoginSuccess(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userToken', token);
+
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/home');
+    }
   }
 
   @override

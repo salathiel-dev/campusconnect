@@ -16,7 +16,7 @@ class Produto {
       id: json['id'],
       titulo: json['titulo'],
       preco: (json['preco'] as num).toDouble(),
-      nomeVendedor: json['vendedor']['nome'],
+      nomeVendedor: json['nomeVendedor'],
     );
   }
 }
