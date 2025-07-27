@@ -4,6 +4,8 @@ import 'src/screens/home_screen.dart';
 import 'src/screens/login_screen.dart';
 import 'src/screens/splash_screen.dart';
 import 'src/screens/product_detail_screen.dart';
+import 'src/screens/chat_list_screen.dart';
+import 'src/screens/chat_screen.dart';
 
 void main() {
   runApp(const CampusConnectApp());
@@ -29,6 +31,10 @@ class CampusConnectApp extends StatelessWidget {
             },
           );
         }
+        if (settings.name == '/chat') {
+          final conversaId = settings.arguments as String;
+          return MaterialPageRoute(builder: (context) => ChatScreen(conversaId: conversaId));
+        }
         return null;
       },
       routes: {
@@ -36,6 +42,7 @@ class CampusConnectApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
         '/add-product': (context) => const AddProductScreen(),
+        '/chat-list': (context) => const ChatListScreen(),
       },
       debugShowCheckedModeBanner: false,
     );

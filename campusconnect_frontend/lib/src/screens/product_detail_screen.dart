@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/produto_detalhado.dart';
 import '../services/produto_service.dart';
+import '../services/chat_service.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String produtoId;
@@ -101,7 +102,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
                 const SizedBox(height: 40),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    try {
+                      // Inicia a conversa e obtém o ID
+                      final conversaId = await ChatService.iniciarConversa(produto.id);
+                      if (mounted) {
+                        // Navega para a tela de chat, passando o ID da conversa
+                        Navigator.of(context).pushNamed('/chat', arguments: conversaId);
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Erro ao iniciar chat: ${e.toString()}')),
+                        );
+                      }
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: interactiveBlue,
                     foregroundColor: Colors.white,

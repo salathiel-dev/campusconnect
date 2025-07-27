@@ -43,6 +43,13 @@ class _HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
+            icon: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/chat-list');
+            },
+            tooltip: 'Minhas Conversas',
+          ),
+          IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: _handleLogout,
             tooltip: 'Sair',
