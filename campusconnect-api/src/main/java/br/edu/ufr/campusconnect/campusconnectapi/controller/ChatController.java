@@ -16,6 +16,7 @@ import br.edu.ufr.campusconnect.campusconnectapi.domain.chat.dto.DadosListagemMe
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -36,6 +37,7 @@ public class ChatController {
         return ResponseEntity.ok(dadosConversa);
     }
 
+    @Transactional
     @GetMapping
     public ResponseEntity listarConversas(Authentication authentication) {
         var usuario = (Usuario) authentication.getPrincipal();
@@ -44,6 +46,7 @@ public class ChatController {
     }
 
     @GetMapping("/{idConversa}/messages")
+    @Transactional
     public ResponseEntity<Page<DadosListagemMensagem>> listarMensagens(
             @PathVariable UUID idConversa,
             Authentication authentication,

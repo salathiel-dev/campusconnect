@@ -4,6 +4,7 @@ import 'package:stomp_dart_client/stomp_dart_client.dart';
 import '../models/mensagem.dart';
 import '../services/chat_service.dart';
 import '../services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatScreen extends StatefulWidget {
   final String conversaId;
@@ -51,12 +52,26 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _setupStompClient() {
+  Future<void> _setupStompClient() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('userToken');
+
+    if (token == null) {
+      print("Erro: Token não encontrado para a conexão WebSocket.");
+      return;
+    }
+
     stompClient = StompClient(
       config: StompConfig(
         url: 'ws://localhost:8081/ws',
         onConnect: onConnectCallback,
         onWebSocketError: (dynamic error) => print(error.toString()),
+        stompConnectHeaders: {
+          'Authorization': 'Bearer $token',
+        },
+        webSocketConnectHeaders: {
+          'Authorization': 'Bearer $token',
+        },
       ),
     );
     stompClient!.activate();
