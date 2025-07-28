@@ -3,9 +3,10 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/produto.dart';
 import '../models/produto_detalhado.dart';
+import './api.dart';
 
 class ProdutoService {
-  static const String baseUrl = 'https://campusconnect-api-ufr-52a53500c2c2.herokuapp.com';
+  // static const String baseUrl = 'https://campusconnect-api-ufr-52a53500c2c2.herokuapp.com';
   static const Duration timeoutDuration = Duration(seconds: 15);
 
   static Future<List<Produto>> buscarProdutos() async {
@@ -20,7 +21,7 @@ class ProdutoService {
 
     print('[DEBUG] Token encontrado: ${token.substring(0, 15)}...');
 
-    final url = Uri.parse('$baseUrl/products');
+    final url = Uri.parse('${ApiService.baseUrl}/products');
     print('[DEBUG] A fazer requisição GET para: $url');
 
     var client = http.Client();
@@ -66,7 +67,7 @@ class ProdutoService {
       throw Exception('Utilizador não autenticado.');
     }
 
-    final url = Uri.parse('$baseUrl/products');
+    final url = Uri.parse('${ApiService.baseUrl}/products');
 
     final response = await http.post(
       url,
@@ -94,7 +95,7 @@ class ProdutoService {
       throw Exception('Utilizador não autenticado.');
     }
 
-    final url = Uri.parse('$baseUrl/products/$id');
+    final url = Uri.parse('${ApiService.baseUrl}/products/$id');
 
     final response = await http.get(
       url,

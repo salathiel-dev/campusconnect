@@ -3,9 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/conversa.dart';
 import '../models/mensagem.dart';
+import './api.dart';
 
 class ChatService {
-  static const String baseUrl = 'https://campusconnect-api-ufr-52a53500c2c2.herokuapp.com';
   static const Duration timeoutDuration = Duration(seconds: 15);
 
   static Future<String> iniciarConversa(String produtoId) async {
@@ -13,7 +13,7 @@ class ChatService {
     final token = prefs.getString('userToken');
     if (token == null) throw Exception('Utilizador não autenticado.');
 
-    final url = Uri.parse('$baseUrl/chats/iniciar');
+    final url = Uri.parse('${ApiService.baseUrl}/chats/iniciar');
     final response = await http.post(
       url,
       headers: {
@@ -35,7 +35,7 @@ class ChatService {
     final token = prefs.getString('userToken');
     if (token == null) throw Exception('Utilizador não autenticado.');
 
-    final url = Uri.parse('$baseUrl/chats');
+    final url = Uri.parse('${ApiService.baseUrl}/chats');
     final response = await http.get(
       url,
       headers: {'Authorization': 'Bearer $token'},
@@ -54,7 +54,7 @@ class ChatService {
     final token = prefs.getString('userToken');
     if (token == null) throw Exception('Utilizador não autenticado.');
 
-    final url = Uri.parse('$baseUrl/chats/$conversaId/messages');
+    final url = Uri.parse('${ApiService.baseUrl}/chats/$conversaId/messages');
     final response = await http.get(
       url,
       headers: {'Authorization': 'Bearer $token'},
