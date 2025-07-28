@@ -5,7 +5,7 @@ import '../models/conversa.dart';
 import '../models/mensagem.dart';
 
 class ChatService {
-  static const String baseUrl = 'http://localhost:8081'; // Para Windows Desktop
+  static const String baseUrl = 'https://campusconnect-api-ufr-52a53500c2c2.herokuapp.com'; // Para Windows Desktop
   static const Duration timeoutDuration = Duration(seconds: 15);
 
   static Future<String> iniciarConversa(String produtoId) async {

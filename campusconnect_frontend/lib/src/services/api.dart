@@ -4,16 +4,14 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   static String get baseUrl {
-    if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8081';
-    } else if (Platform.isIOS) {
-      return 'http://localhost:8081';
+    if (Platform.isAndroid || Platform.isIOS) {
+      return 'https://campusconnect-api-ufr-52a53500c2c2.herokuapp.com';
     } else {
-      return 'http://localhost:8081';
+      return 'https://campusconnect-api-ufr-52a53500c2c2.herokuapp.com';
     }
   }
 
-  static const Duration _timeout = Duration(seconds: 15);
+  static const Duration _timeout = Duration(seconds: 30);
 
   // Metodo para login
   static Future<Map<String, dynamic>> login({
@@ -51,20 +49,12 @@ class ApiService {
     } on SocketException {
       return {
         'success': false,
-        'error': 'Não foi possível conectar ao servidor. Verifique se:\n'
-                '1. O servidor backend está rodando na porta 8081\n'
-                '2. Sua conexão de rede está funcionando\n'
-                '3. O firewall não está bloqueando a conexão',
-      };
-    } on http.ClientException {
-      return {
-        'success': false,
-        'error': 'Erro de cliente HTTP. Verifique a configuração do servidor.',
+        'error': 'Não foi possível conectar ao servidor. Por favor, verifique a sua conexão à internet e tente novamente.',
       };
     } catch (error) {
       return {
         'success': false,
-        'error': 'Erro inesperado: ${error.toString()}',
+        'error': 'Ocorreu um erro inesperado. Tente novamente mais tarde.',
       };
     }
   }
@@ -73,7 +63,7 @@ class ApiService {
   static Future<bool> testConnection() async {
     try {
       final url = Uri.parse('$baseUrl/actuator/health');
-      final response = await http.get(url).timeout(const Duration(seconds: 5));
+      final response = await http.get(url).timeout(const Duration(seconds: 30));
       return response.statusCode == 200;
     } catch (error) {
       return false;

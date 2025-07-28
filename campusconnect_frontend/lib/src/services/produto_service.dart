@@ -5,8 +5,7 @@ import '../models/produto.dart';
 import '../models/produto_detalhado.dart';
 
 class ProdutoService {
-  // CORREÇÃO: Alterado de 10.0.2.2 para localhost
-  static const String baseUrl = 'http://localhost:8081';
+  static const String baseUrl = 'https://campusconnect-api-ufr-52a53500c2c2.herokuapp.com';
   static const Duration timeoutDuration = Duration(seconds: 15);
 
   static Future<List<Produto>> buscarProdutos() async {
