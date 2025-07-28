@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'http_overrides.dart';
 import 'src/screens/add_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'src/screens/home_screen.dart';
@@ -8,6 +10,7 @@ import 'src/screens/chat_list_screen.dart';
 import 'src/screens/chat_screen.dart';
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const CampusConnectApp());
 }
 
