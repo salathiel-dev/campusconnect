@@ -19,10 +19,9 @@ class _HomeScreenState extends State<HomeScreen> {
     _futureProdutos = ProdutoService.buscarProdutos();
   }
 
-  // Função para fazer logout
   Future<void> _handleLogout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('userToken'); // Remove o token
+    await prefs.remove('userToken');
 
     if (mounted) {
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);

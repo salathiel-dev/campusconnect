@@ -13,20 +13,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
-  bool _isServerOnline = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkServerConnection();
-  }
-
-  Future<void> _checkServerConnection() async {
-    final isOnline = await ApiService.testConnection();
-    setState(() {
-      _isServerOnline = isOnline;
-    });
-  }
 
   Future<void> _handleLogin() async {
     final email = _emailController.text.trim();
@@ -49,16 +35,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (result['success']) {
         final token = result['data']['token'];
-        _handleLoginSuccess(token);
+        await _handleLoginSuccess(token);
       } else {
         _showErrorDialog('Erro no Login', result['error']);
       }
     } catch (error) {
       _showErrorDialog('Erro Inesperado', error.toString());
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _handleLoginSuccess(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userToken', token);
+
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/home');
     }
   }
 
@@ -78,15 +75,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> _handleLoginSuccess(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userToken', token);
-
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/home');
-    }
-  }
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -103,8 +91,6 @@ class _LoginScreenState extends State<LoginScreen> {
     const Color mediumGray = Color(0xFFA0AEC0);
     const Color white = Color(0xFFFFFFFF);
     const Color softBlue = Color(0xFFE0EFFF);
-    const Color errorRed = Color(0xFFE53E3E);
-    const Color successGreen = Color(0xFF38A169);
 
     return Scaffold(
       backgroundColor: lightGray,
@@ -116,47 +102,6 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                // Status do servidor
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                    color: _isServerOnline ? successGreen.withOpacity(0.1) : errorRed.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: _isServerOnline ? successGreen : errorRed,
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        _isServerOnline ? Icons.check_circle : Icons.error,
-                        color: _isServerOnline ? successGreen : errorRed,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _isServerOnline
-                            ? 'Servidor conectado (${ApiService.baseUrl})'
-                            : 'Servidor offline - Verifique se o backend está rodando',
-                          style: TextStyle(
-                            color: _isServerOnline ? successGreen : errorRed,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.refresh, size: 18),
-                        onPressed: _checkServerConnection,
-                        color: _isServerOnline ? successGreen : errorRed,
-                      ),
-                    ],
-                  ),
-                ),
-
                 const Text(
                   'CampusConnect',
                   textAlign: TextAlign.center,
