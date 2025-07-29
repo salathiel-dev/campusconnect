@@ -102,6 +102,11 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                const Icon(
+                  Icons.school,
+                  size: 100,
+                  color: ufrBlue,
+                ),
                 const Text(
                   'CampusConnect',
                   textAlign: TextAlign.center,

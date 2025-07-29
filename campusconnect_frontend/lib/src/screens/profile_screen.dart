@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/perfil_usuario.dart';
+import '../services/produto_service.dart';
 import '../services/profile_service.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -16,6 +17,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _futurePerfil = ProfileService.buscarMeuPerfil();
+  }
+
+  void _reloadData() {
+    setState(() {
+      _futurePerfil = ProfileService.buscarMeuPerfil();
+    });
+  }
+
+  Future<void> _confirmDelete(String produtoId) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmar Exclusão'),
+          content: const Text('Você tem a certeza de que deseja excluir este anúncio? Esta ação não pode ser desfeita.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Excluir'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                try {
+                  await ProdutoService.excluirProduto(produtoId);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Anúncio excluído com sucesso!')),
+                  );
+                  _reloadData();
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Erro ao excluir: ${e.toString()}')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -47,7 +91,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           return ListView(
             children: [
-              // Secção de Informações do Utilizador
               Container(
                 padding: const EdgeInsets.all(24.0),
                 color: Colors.white,
@@ -66,14 +109,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Secção "Meus Anúncios"
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text('Meus Anúncios', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
               const SizedBox(height: 10),
 
-              // Lista de Anúncios
               if (perfil.meusProdutos.isEmpty)
                 const Center(child: Padding(
                   padding: EdgeInsets.all(20.0),
@@ -85,8 +126,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
                     child: ListTile(
                       title: Text(produto.titulo),
-                      subtitle: Text('Status: ${produto.status}'),
-                      trailing: Text('R\$ ${produto.preco.toStringAsFixed(2)}'),
+                      subtitle: Text('Status: ${produto.status ?? 'N/A'}'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('R\$ ${produto.preco.toStringAsFixed(2)}'),
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () {
+                              Navigator.of(context).pushNamed('/edit-product', arguments: produto.id);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              _confirmDelete(produto.id);
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }).toList(),

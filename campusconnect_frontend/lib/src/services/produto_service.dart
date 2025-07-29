@@ -112,4 +112,54 @@ class ProdutoService {
       throw Exception('Falha ao carregar os detalhes do produto. Status: ${response.statusCode}');
     }
   }
+
+  static Future<void> atualizarProduto({
+    required String id,
+    required String titulo,
+    required String descricao,
+    required double preco,
+    required String categoria,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('userToken');
+    if (token == null) throw Exception('Utilizador não autenticado.');
+
+    final url = Uri.parse('${ApiService.baseUrl}/products/$id');
+
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode({
+        'titulo': titulo,
+        'descricao': descricao,
+        'preco': preco,
+        'categoria': categoria,
+      }),
+    ).timeout(timeoutDuration);
+
+    if (response.statusCode != 200) {
+      throw Exception('Falha ao atualizar o produto. Status: ${response.statusCode}');
+    }
+  }
+
+  static Future<void> excluirProduto(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('userToken');
+    if (token == null) throw Exception('Utilizador não autenticado.');
+
+    final url = Uri.parse('${ApiService.baseUrl}/products/$id');
+
+    final response = await http.delete(
+      url,
+      headers: {'Authorization': 'Bearer $token'},
+    ).timeout(timeoutDuration);
+
+    if (response.statusCode != 204) {
+      throw Exception('Falha ao excluir o produto. Status: ${response.statusCode}');
+    }
+  }
 }
+

@@ -8,6 +8,7 @@ import 'src/screens/product_detail_screen.dart';
 import 'src/screens/profile_screen.dart';
 import 'src/screens/splash_screen.dart';
 import 'src/screens/register_screen.dart';
+import 'src/screens/edit_product_screen.dart';
 
 void main() {
   // HttpOverrides.global = MyHttpOverrides();
@@ -63,6 +64,10 @@ class CampusConnectApp extends StatelessWidget {
               return ChatScreen(conversaId: conversaId);
             },
           );
+        }
+        if (settings.name == '/edit-product') {
+          final productId = settings.arguments as String;
+          return MaterialPageRoute(builder: (context) => EditProductScreen(produtoId: productId));
         }
         return null;
       },
