@@ -5,9 +5,9 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static String get baseUrl {
     if (Platform.isAndroid || Platform.isIOS) {
-      return 'https://campusconnect-api-ufr-52a53500c2c2.herokuapp.com';
+      return 'http://localhost:8081'; // 'https://campusconnect-api-ufr-52a53500c2c2.herokuapp.com';
     } else {
-      return 'https://campusconnect-api-ufr-52a53500c2c2.herokuapp.com';
+      return 'http://localhost:8081'; // 'https://campusconnect-api-ufr-52a53500c2c2.herokuapp.com';
     }
   }
 

@@ -42,6 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
+            icon: const Icon(Icons.person_outline, color: Colors.white),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/profile');
+            },
+            tooltip: 'Meu Perfil',
+          ),
+          IconButton(
             icon: const Icon(Icons.chat_bubble_outline, color: Colors.white),
             onPressed: () {
               Navigator.of(context).pushNamed('/chat-list');
