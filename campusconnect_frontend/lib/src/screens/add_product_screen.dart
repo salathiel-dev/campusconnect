@@ -37,7 +37,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          Navigator.of(context).pop('success');
+          // CORREÇÃO: Apenas uma chamada ao pop com o resultado
+          Navigator.of(context).pop('updated');
         }
       } catch (e) {
         if (mounted) {

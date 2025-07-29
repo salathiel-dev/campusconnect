@@ -10,8 +10,31 @@ import 'src/screens/splash_screen.dart';
 import 'src/screens/register_screen.dart';
 import 'src/screens/edit_product_screen.dart';
 
-void main() {
+import 'package:window_manager/window_manager.dart';
+import 'dart:io';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    await windowManager.ensureInitialized();
+
+    WindowOptions windowOptions = const WindowOptions(
+      size: Size(412, 915),
+      center: true,
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false,
+      titleBarStyle: TitleBarStyle.normal,
+    );
+
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+  }
+
   // HttpOverrides.global = MyHttpOverrides();
+
   runApp(const CampusConnectApp());
 }
 

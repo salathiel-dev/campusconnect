@@ -46,10 +46,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Produto atualizado com sucesso!')),
           );
-          Navigator.of(context).pop();
+          Navigator.of(context).pop('updated');
         }
       } catch (e) {
-
+        // Preciso tratar erro aqui
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erro ao atualizar: ${e.toString()}')),
+          );
+        }
       } finally {
         if (mounted) {
           setState(() { _isLoading = false; });
@@ -69,8 +74,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const Color ufrBlue = Color(0xFF193866);
+    const Color interactiveBlue = Color(0xFF3A86FF);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Editar Produto')),
+      appBar: AppBar(
+        title: const Text('Editar Produto'),
+        backgroundColor: ufrBlue,
+        foregroundColor: Colors.white,
+      ),
       body: FutureBuilder<ProdutoDetalhado>(
         future: _futureProduto,
         builder: (context, snapshot) {
@@ -97,7 +109,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   const SizedBox(height: 32),
                   _isLoading
                       ? const Center(child: CircularProgressIndicator())
-                      : ElevatedButton(onPressed: _submitForm, child: const Text('Salvar Alterações')),
+                      : ElevatedButton(
+                    onPressed: _submitForm,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: interactiveBlue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text('Salvar Alterações'),
+                  ),
                 ],
               ),
             ),

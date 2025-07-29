@@ -43,8 +43,11 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.person_outline, color: Colors.white),
-            onPressed: () {
-              Navigator.of(context).pushNamed('/profile');
+            onPressed: () async {
+              await Navigator.of(context).pushNamed('/profile');
+              setState(() {
+                _futureProdutos = ProdutoService.buscarProdutos();
+              });
             },
             tooltip: 'Meu Perfil',
           ),
@@ -141,8 +144,13 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed('/add-product');
+        onPressed: () async {
+          final result = await Navigator.of(context).pushNamed('/add-product');
+          if (result == 'updated') {
+            setState(() {
+              _futureProdutos = ProdutoService.buscarProdutos();
+            });
+          }
         },
         backgroundColor: ufrBlue,
         foregroundColor: Colors.white,

@@ -122,27 +122,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ))
               else
                 ...perfil.meusProdutos.map((produto) {
+                  final bool isActive = produto.status == 'ATIVO';
                   return Card(
                     margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+                    color: isActive ? Colors.white : Colors.grey[200],
                     child: ListTile(
-                      title: Text(produto.titulo),
-                      subtitle: Text('Status: ${produto.status ?? 'N/A'}'),
+                      title: Text(
+                        produto.titulo,
+                        style: TextStyle(color: isActive ? Colors.black : Colors.grey[600],
+                        ),
+                      ),
+                      subtitle: Text('Status: ${produto.status ?? 'ATIVO'}'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('R\$ ${produto.preco.toStringAsFixed(2)}'),
-                          IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () {
-                              Navigator.of(context).pushNamed('/edit-product', arguments: produto.id);
-                            },
+                          Text('R\$ ${produto.preco.toStringAsFixed(2)}',
+                            style: TextStyle(color: isActive ? Colors.green : Colors.grey[600]),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              _confirmDelete(produto.id);
-                            },
-                          ),
+                          if (isActive)
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () async {
+                                final result = await Navigator.of(context).pushNamed('/edit-product', arguments: produto.id);
+                                if (result == 'updated') {
+                                  _reloadData();
+                                }
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete, color: isActive ? Colors.red : Colors.grey),
+                              onPressed: isActive ? () => _confirmDelete(produto.id) : null,
+                            ),
                         ],
                       ),
                     ),

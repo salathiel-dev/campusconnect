@@ -91,7 +91,6 @@ class ApiService {
       if (response.statusCode == 201) {
         return {'success': true};
       } else {
-        // Tenta ler uma mensagem de erro do backend
         final responseData = json.decode(response.body);
         return {
           'success': false,
