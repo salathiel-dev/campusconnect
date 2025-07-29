@@ -157,6 +157,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {},
                   child: const Text('Esqueci minha senha', style: TextStyle(color: interactiveBlue)),
                 ),
+                const SizedBox(height: 16), // Espaçamento
+                TextButton(
+                  onPressed: () {
+                    // Navega para a tela de cadastro
+                    Navigator.of(context).pushNamed('/register');
+                  },
+                  child: const Text(
+                    'Não tem uma conta? Cadastre-se',
+                    style: TextStyle(color: interactiveBlue),
+                  ),
+                ),
               ],
             ),
           ),

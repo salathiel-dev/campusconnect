@@ -7,10 +7,9 @@ import 'src/screens/login_screen.dart';
 import 'src/screens/product_detail_screen.dart';
 import 'src/screens/profile_screen.dart';
 import 'src/screens/splash_screen.dart';
+import 'src/screens/register_screen.dart';
 
 void main() {
-  // A configuração de HttpOverrides pode ser necessária para o APK final,
-  // mas pode ser comentada durante o desenvolvimento local se não houver problemas de SSL.
   // HttpOverrides.global = MyHttpOverrides();
   runApp(const CampusConnectApp());
 }
@@ -25,23 +24,20 @@ class CampusConnectApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         fontFamily: 'Inter',
-        // Define um tema global para os TextFormFields para um visual mais limpo
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Color(0xFFE0EFFF)), // soft-blue
+            borderSide: const BorderSide(color: Color(0xFFE0EFFF)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Color(0xFFE0EFFF)), // soft-blue
+            borderSide: const BorderSide(color: Color(0xFFE0EFFF)),
           ),
           filled: true,
           fillColor: Colors.white,
         ),
       ),
-      // A rota inicial é a SplashScreen, que decide para onde ir.
       initialRoute: '/',
-      // Rotas que não precisam de argumentos
       routes: {
         '/': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
@@ -49,8 +45,8 @@ class CampusConnectApp extends StatelessWidget {
         '/add-product': (context) => const AddProductScreen(),
         '/chat-list': (context) => const ChatListScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/register': (context) => const RegisterScreen(),
       },
-      // Gerador de rotas para telas que precisam receber argumentos
       onGenerateRoute: (settings) {
         if (settings.name == '/product-detail') {
           final productId = settings.arguments as String;
@@ -68,7 +64,6 @@ class CampusConnectApp extends StatelessWidget {
             },
           );
         }
-        // Se a rota não for encontrada, pode retornar uma tela de erro
         return null;
       },
       debugShowCheckedModeBanner: false,

@@ -69,4 +69,40 @@ class ApiService {
       return false;
     }
   }
+
+  static Future<Map<String, dynamic>> register({
+    required String nomeCompleto,
+    required String email,
+    required String password,
+  }) async {
+    final url = Uri.parse('$baseUrl/auth/register');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'nomeCompleto': nomeCompleto,
+          'email': email,
+          'senha': password,
+        }),
+      ).timeout(_timeout);
+
+      if (response.statusCode == 201) {
+        return {'success': true};
+      } else {
+        // Tenta ler uma mensagem de erro do backend
+        final responseData = json.decode(response.body);
+        return {
+          'success': false,
+          'error': responseData['message'] ?? 'Erro desconhecido no cadastro.',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'error': 'Não foi possível conectar ao servidor. Tente novamente.',
+      };
+    }
+  }
 }
