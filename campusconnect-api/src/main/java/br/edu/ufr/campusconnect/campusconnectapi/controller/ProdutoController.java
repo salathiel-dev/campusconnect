@@ -17,7 +17,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import br.edu.ufr.campusconnect.campusconnectapi.infra.storage.ImageUploadService;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -26,6 +31,9 @@ public class ProdutoController {
 
     @Autowired
     private ProdutoRepository repository;
+
+    @Autowired
+    private ImageUploadService imageUploadService;
 
     @PostMapping
     @Transactional
@@ -79,6 +87,23 @@ public class ProdutoController {
         produto.excluir();
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/upload-image")
+    @Transactional
+    public ResponseEntity uploadImage(@PathVariable UUID id, @RequestParam("file") MultipartFile file, Authentication authentication) throws IOException {
+        var produto = repository.findById(id).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+        var usuarioLogado = (Usuario) authentication.getPrincipal();
+        if (!produto.getVendedor().getId().equals(usuarioLogado.getId())) {
+            return ResponseEntity.status(403).body("Acesso negado.");
+        }
+
+        String imageUrl = imageUploadService.uploadImage(file);
+        produto.setImageUrl(imageUrl);
+        repository.save(produto);
+
+        return ResponseEntity.ok().body(Map.of("imageUrl", imageUrl));
     }
 }
 

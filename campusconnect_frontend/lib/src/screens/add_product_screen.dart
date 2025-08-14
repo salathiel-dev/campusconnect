@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../services/produto_service.dart';
 
 class AddProductScreen extends StatefulWidget {
@@ -15,45 +17,55 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final _priceController = TextEditingController();
   final _categoryController = TextEditingController();
   bool _isLoading = false;
+  File? _imageFile; // Para guardar o ficheiro da imagem selecionada
+
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+      if (_imageFile == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Por favor, selecione uma imagem.')),
+        );
+        return;
+      }
+
+      setState(() { _isLoading = true; });
 
       try {
-        await ProdutoService.cadastrarProduto(
+        // 1. Cadastra o produto com os dados de texto
+        final produtoCriado = await ProdutoService.cadastrarProduto(
           titulo: _titleController.text,
           descricao: _descriptionController.text,
           preco: double.parse(_priceController.text),
           categoria: _categoryController.text,
         );
 
+        // 2. Faz o upload da imagem para o produto recém-criado
+        await ProdutoService.uploadImage(produtoCriado.id, _imageFile!);
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Produto cadastrado com sucesso!'),
-              backgroundColor: Colors.green,
-            ),
+            const SnackBar(content: Text('Produto cadastrado com sucesso!')),
           );
-          // CORREÇÃO: Apenas uma chamada ao pop com o resultado
           Navigator.of(context).pop('updated');
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Erro ao cadastrar: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text('Erro ao cadastrar: ${e.toString()}')),
           );
         }
       } finally {
         if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
+          setState(() { _isLoading = false; });
         }
       }
     }
@@ -88,6 +100,30 @@ class _AddProductScreenState extends State<AddProductScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: _imageFile != null
+                      ? ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(_imageFile!, fit: BoxFit.cover, width: double.infinity),
+                  )
+                      : const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.camera_alt, size: 50, color: Colors.grey),
+                      Text('Adicionar Imagem'),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(labelText: 'Título do Anúncio'),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/produto.dart';
@@ -54,7 +55,7 @@ class ProdutoService {
     }
   }
 
-  static Future<void> cadastrarProduto({
+  static Future<ProdutoDetalhado> cadastrarProduto({
     required String titulo,
     required String descricao,
     required double preco,
@@ -62,13 +63,9 @@ class ProdutoService {
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('userToken');
-
-    if (token == null) {
-      throw Exception('Utilizador não autenticado.');
-    }
+    if (token == null) throw Exception('Utilizador não autenticado.');
 
     final url = Uri.parse('${ApiService.baseUrl}/products');
-
     final response = await http.post(
       url,
       headers: {
@@ -81,12 +78,32 @@ class ProdutoService {
         'preco': preco,
         'categoria': categoria,
       }),
-    ).timeout(timeoutDuration);
+    ).timeout(const Duration(seconds: 15));
 
-    if (response.statusCode != 201) {
+    if (response.statusCode == 201) {
+      return ProdutoDetalhado.fromJson(json.decode(response.body));
+    } else {
       throw Exception('Falha ao cadastrar o produto. Status: ${response.statusCode}');
     }
   }
+
+  static Future<void> uploadImage(String produtoId, File imageFile) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('userToken');
+    if (token == null) throw Exception('Utilizador não autenticado.');
+
+    final url = Uri.parse('${ApiService.baseUrl}/products/$produtoId/upload-image');
+    var request = http.MultipartRequest('POST', url);
+    request.headers['Authorization'] = 'Bearer $token';
+    request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+
+    final response = await request.send();
+
+    if (response.statusCode != 200) {
+      throw Exception('Falha ao fazer o upload da imagem. Status: ${response.statusCode}');
+    }
+  }
+
   static Future<ProdutoDetalhado> buscarProdutoPorId(String id) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('userToken');

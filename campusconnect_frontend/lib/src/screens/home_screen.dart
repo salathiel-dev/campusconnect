@@ -126,6 +126,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                       child: ListTile(
+                        leading: SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: produto.imageUrl != null
+                                ? Image.network(produto.imageUrl!, fit: BoxFit.cover)
+                                : Container(color: Colors.grey[200], child: const Icon(Icons.image_not_supported)),
+                          ),
+                        ),
                         contentPadding: const EdgeInsets.all(16.0),
                         title: Text(produto.titulo, style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
